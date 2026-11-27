@@ -1,0 +1,14 @@
+[
+  {
+    "caseId": "TC02",
+    "description": "Invalid password",
+    "email": "test_qa_user@example.com",
+    "password": "wrongpassword123"
+  },
+  {
+    "caseId": "TC03",
+    "description": "Non-existent email",
+    "email": "notfound_9999@example.com",
+    "password": "Password123!"
+  }
+]
