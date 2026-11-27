@@ -1,22 +1,12 @@
-# Test Plan: Automation Exercise (E-Commerce)
+# Test Plan: Hybrid QA Portfolio (SauceDemo UI + Restful-Booker API)
 
 ## 1. Objective
-ตรวจสอบความถูกต้องของฟีเจอร์หลักบนเว็บ E-Commerce (`https://automationexercise.com`) ทั้งฝั่ง UI และ REST API โดยผสมผสานระหว่าง Manual Testing และ Automated Testing
+ตรวจสอบความถูกต้องของระบบ E-Commerce ฝั่ง UI (`https://www.saucedemo.com`) และระบบจองห้องพักฝั่ง REST API (`https://restful-booker.herokuapp.com`) โดยผสมผสานระหว่าง Manual Testing และ Automated Testing
 
 ## 2. Scope of Testing
-- **In-Scope:**
-  - Authentication (Register, Login, Logout)
-  - Product Search & Filtering
-  - Shopping Cart & Checkout Flow
-  - REST API Verification (Products List, Verify Login, Create/Delete Account)
-- **Out-of-Scope:**
-  - Performance / Load Testing
-  - Payment Gateway จริง (ใช้ข้อมูลบัตรจำลองเท่านั้น)
+- **UI (SauceDemo):** Authentication (Valid, Locked Out, Invalid, Empty), Exploratory Testing (`problem_user`)
+- **API (Restful-Booker):** Full CRUD Lifecycle (`POST /auth`, `POST /booking`, `GET /booking/:id`, `DELETE /booking/:id`) และ Negative Case (`404 Not Found`)
 
 ## 3. Test Strategy (Manual vs Automation)
-- **Automated (Playwright + POM):** เลือก Flow หลักที่ต้องเทสซ้ำบ่อยๆ (Regression), Data-Driven Login และ API Pre-condition/Cleanup
-- **Manual:** เคสที่เน้นการตรวจสอบหน้าตา UI/Layout, การแสดงผลบนหน้าจอขนาดต่างๆ และ Exploratory Testing เพื่อหาบั๊กที่ไม่ได้อยู่ในสคริปต์
-
-## 4. Risk & Mitigation
-- **Risk:** เว็บเป้าหมายมี Google Ads เด้งคั่นระหว่างเปลี่ยนหน้า อาจทำให้ Automated Test สุ่มพัง (Flaky Test)
-- **Mitigation:** ใช้ `page.route()` ใน Playwright เพื่อบล็อก Request จากโดเมนโฆษณาขณะรันเทส
+- **Automated (Playwright + POM):** รัน Regression บน Flow หลัก, Data-Driven Login และ API CRUD Lifecycle ผูกกับ GitHub Actions CI/CD
+- **Manual:** Exploratory Testing ด้วยบัญชี `problem_user` เพื่อตรวจจับบั๊กด้าน UI/UX และพฤติกรรมที่ผิดปกติ
