@@ -1,27 +1,26 @@
 import { Locator, Page } from '@playwright/test';
-import { BasePage } from './BasePage';
 
-export class LoginPage extends BasePage {
-  readonly emailInput: Locator;
+export class LoginPage {
+  readonly page: Page;
+  readonly usernameInput: Locator;
   readonly passwordInput: Locator;
   readonly loginButton: Locator;
   readonly errorMessage: Locator;
 
   constructor(page: Page) {
-    super(page);
-    this.emailInput = page.locator('[data-qa="login-email"]');
-    this.passwordInput = page.locator('[data-qa="login-password"]');
-    this.loginButton = page.locator('[data-qa="login-button"]');
-    this.errorMessage = page.getByText('Your email or password is incorrect!');
+    this.page = page;
+    this.usernameInput = page.locator('[data-test="username"]');
+    this.passwordInput = page.locator('[data-test="password"]');
+    this.loginButton = page.locator('[data-test="login-button"]');
+    this.errorMessage = page.locator('[data-test="error"]');
   }
 
   async goto() {
-    await this.blockAds();
-    await this.page.goto('/login');
+    await this.page.goto('/');
   }
 
-  async login(email: string, password: string) {
-    await this.emailInput.fill(email);
+  async login(username: string, password: string) {
+    await this.usernameInput.fill(username);
     await this.passwordInput.fill(password);
     await this.loginButton.click();
   }

@@ -1,25 +1,49 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('API Testing - Automation Exercise', () => {
-  test('TC10: GET /api/productsList returns 200 and product list', async ({ request }) => {
-    const response = await request.get('/api/productsList');
-    expect(response.status()).toBe(200);
+const API_BASE = 'https://restful-booker.herokuapp.com';
 
-    const body = JSON.parse(await response.text());
-    expect(body.responseCode).toBe(200);
-    expect(body.products.length).toBeGreaterThan(0);
-  });
+test.describe('API Testing - Restful Booker (CRUD Lifecycle)', () => {
+  test('TC10: Full Booking Lifecycle (Auth -> Create -> Get -> Delete)', async ({ request }) => {
+    // 1. POST /auth - ขอ Token
+    const authRes = await request.post(`${API_BASE}/auth`, {
+      data: { username: 'admin', password: 'password123' },
+    });
+    expect(authRes.status()).toBe(200);
+    const { token } = await authRes.json();
+    expect(token).toBeTruthy();
 
-  test('TC11: POST /api/verifyLogin without email returns 400', async ({ request }) => {
-    const response = await request.post('/api/verifyLogin', {
-      form: {
-        password: 'Password123!',
+    // 2. POST /booking - สร้างรายการจองใหม่
+    const createRes = await request.post(`${API_BASE}/booking`, {
+      data: {
+        firstname: 'QA',
+        lastname: 'Portfolio',
+        totalprice: 1500,
+        depositpaid: true,
+        bookingdates: { checkin: '2026-12-01', checkout: '2026-12-05' },
+        additionalneeds: 'Breakfast',
       },
     });
+    expect(createRes.status()).toBe(200);
+    const created = await createRes.json();
+    const bookingId = created.bookingid;
+    expect(bookingId).toBeDefined();
 
-    const body = JSON.parse(await response.text());
-    // หมายเหตุ: เว็บนี้ส่ง HTTP 200 แต่ใส่ responseCode: 400 ใน Body (เอาไปเขียน Bug Report ได้!)
-    expect(body.responseCode).toBe(400);
-    expect(body.message).toContain('email or password parameter is missing');
+    // 3. GET /booking/:id - ตรวจสอบข้อมูลที่สร้าง
+    const getRes = await request.get(`${API_BASE}/booking/${bookingId}`);
+    expect(getRes.status()).toBe(200);
+    const booking = await getRes.json();
+    expect(booking.firstname).toBe('QA');
+    expect(booking.lastname).toBe('Portfolio');
+
+    // 4. DELETE /booking/:id - ลบข้อมูลทิ้ง (Cleanup)
+    const deleteRes = await request.delete(`${API_BASE}/booking/${bookingId}`, {
+      headers: { Cookie: `token=${token}` },
+    });
+    expect(deleteRes.status()).toBe(201);
+  });
+
+  test('TC11: GET non-existent booking returns 404 Not Found', async ({ request }) => {
+    const res = await request.get(`${API_BASE}/booking/999999999`);
+    expect(res.status()).toBe(404);
   });
 });

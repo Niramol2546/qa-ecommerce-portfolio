@@ -1,14 +1,23 @@
 [
   {
     "caseId": "TC02",
-    "description": "Invalid password",
-    "email": "test_qa_user@example.com",
-    "password": "wrongpassword123"
+    "description": "Locked out user",
+    "username": "locked_out_user",
+    "password": "secret_sauce",
+    "expectedError": "Sorry, this user has been locked out."
   },
   {
     "caseId": "TC03",
-    "description": "Non-existent email",
-    "email": "notfound_9999@example.com",
-    "password": "Password123!"
+    "description": "Invalid password",
+    "username": "standard_user",
+    "password": "wrong_password",
+    "expectedError": "Username and password do not match"
+  },
+  {
+    "caseId": "TC04",
+    "description": "Empty username",
+    "username": "",
+    "password": "secret_sauce",
+    "expectedError": "Username is required"
   }
 ]
